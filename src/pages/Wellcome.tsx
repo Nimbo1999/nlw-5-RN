@@ -8,8 +8,15 @@ import colors from '../styles/colors';
 import fonts from '../styles/fonts';
 
 import wateringImage from '../assets/watering.png';
+import { useNavigation } from '@react-navigation/core';
 
 export default function WellcomePage() {
+    const navigation = useNavigation();
+
+    function nextPage() {
+        navigation.navigate('UserIdentification');
+    }
+
     return (
         <SafeAreaView style={style.container}>
             <View style={style.wrapper}>
@@ -29,6 +36,7 @@ export default function WellcomePage() {
                 <TouchableOpacity
                     style={style.button}
                     activeOpacity={0.7}
+                    onPress={nextPage}
                 >
                     <Text style={style.buttonText}>
                         <Feather name="chevron-right" style={style.buttonIcon} />

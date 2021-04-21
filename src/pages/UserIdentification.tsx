@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
-import { SafeAreaView, StyleSheet, View, Text, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
+import {
+    SafeAreaView, StyleSheet, View, Text, TextInput, KeyboardAvoidingView, Platform,
+    TouchableWithoutFeedback, Keyboard
+} from 'react-native';
+import { useNavigation } from '@react-navigation/core';
 
 import Button from '../components/Button';
 
@@ -10,6 +14,8 @@ function UserIdentification() {
     const [isFocused, setIsFocused] = useState(false);
     const [isFilled, setIsFilles] = useState(false);
     const [name, setName] = useState<string>();
+
+    const navigation = useNavigation();
 
     function handleInputBlur() {
         setIsFocused(false);
@@ -25,42 +31,53 @@ function UserIdentification() {
         setName(value)
     }
 
+    function handleSubmit() {
+        if (name) {
+            navigation.navigate('Confirmation');
+        }
+    }
+
     return (
         <SafeAreaView style={styles.container}>
             <KeyboardAvoidingView
                 style={styles.container}
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height' }
             >
-                <View style={styles.content}>
-                    <View style={styles.form}>
-                        <View style={styles.header}>
-                            <Text style={styles.emoji}>
-                                {isFilled ? '🙂' : '😄' }
-                            </Text>
+                <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                    <View style={styles.content}>
+                        <View style={styles.form}>
+                            <View style={styles.header}>
+                                <Text style={styles.emoji}>
+                                    {isFilled ? '😄' : '🙂' }
+                                </Text>
 
-                            <Text style={styles.title}>
-                                Como podemos {'\n'}
-                                chamar você?
-                            </Text>
-                        </View>
+                                <Text style={styles.title}>
+                                    Como podemos {'\n'}
+                                    chamar você?
+                                </Text>
+                            </View>
 
-                        <TextInput
-                            style={[
-                                styles.input,
-                                (isFocused || isFilled) && { borderColor: colors.green }
-                            ]}
-                            placeholder="Digite seu nome"
-                            onChangeText={handleInputChange}
-                            onBlur={handleInputBlur}
-                            onFocus={handleInputFocus}
-                            value={name}
-                        />
+                            <TextInput
+                                style={[
+                                    styles.input,
+                                    (isFocused || isFilled) && { borderColor: colors.green }
+                                ]}
+                                placeholder="Digite seu nome"
+                                onChangeText={handleInputChange}
+                                onBlur={handleInputBlur}
+                                onFocus={handleInputFocus}
+                                value={name}
+                                />
 
-                        <View style={styles.footer}>
-                            <Button />
+                            <View style={styles.footer}>
+                                <Button
+                                    onPress={handleSubmit}
+                                    title="Confirmar"
+                                    />
+                            </View>
                         </View>
                     </View>
-                </View>
+                </TouchableWithoutFeedback>
             </KeyboardAvoidingView>
         </SafeAreaView>
     );
