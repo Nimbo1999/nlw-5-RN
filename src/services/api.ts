@@ -1,4 +1,4 @@
-// const BASE_URL = 'http://IPV4:3333';
+const BASE_URL = 'http://IPV4HOST:3333';
 
 export default {
     get: async (url: string) => {
@@ -8,3 +8,5 @@ export default {
             .catch(err => { throw err });
     }
 }
+
+// json-server ./src/services/server.json --host IPV4HOST --port 3333 --delay 700

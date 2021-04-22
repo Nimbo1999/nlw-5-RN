@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import {
     SafeAreaView, StyleSheet, View, Text, TextInput, KeyboardAvoidingView, Platform,
-    TouchableWithoutFeedback, Keyboard
+    TouchableWithoutFeedback, Keyboard, Alert
 } from 'react-native';
 import { useNavigation } from '@react-navigation/core';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import Button from '../components/Button';
 
@@ -31,10 +32,13 @@ function UserIdentification() {
         setName(value)
     }
 
-    function handleSubmit() {
+    async function handleSubmit() {
         if (name) {
-            navigation.navigate('Confirmation');
+            await AsyncStorage.setItem('@plantmanager:user', name);
+            return navigation.navigate('Confirmation');;
         }
+
+        return Alert.alert('Informe o seu nome', 'O nome é obrigatório.');
     }
 
     return (

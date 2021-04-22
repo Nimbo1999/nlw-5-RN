@@ -1,6 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
 import {StyleSheet, View, Text, FlatList, ActivityIndicator} from 'react-native';
+import { useNavigation } from '@react-navigation/core';
 
 import EnviromentButton from '../components/EnviromentButton';
 import Header from '../components/Header';
@@ -17,7 +18,7 @@ interface EnviromentProps {
     title: string;
 }
 
-interface PlantProps {
+export interface PlantProps {
     id: number;
     name: string;
     about: string;
@@ -31,6 +32,8 @@ interface PlantProps {
 }
 
 function PlantSelect() {
+    const navigation = useNavigation();
+
     const [enviroment, setEnviroment] = useState<EnviromentProps[]>([]);
     const [enviromentSelected, setEnviromentSelected] = useState('all');
     const [filteredPlants, setFilteredPlants] = useState<PlantProps[]>([]);
@@ -77,6 +80,10 @@ function PlantSelect() {
         fetchPlants();
     }
 
+    function handlePlantSelect(plant: PlantProps) {
+        navigation.navigate('PlantSave', { plant });
+    }
+
     useEffect(() => {
         async function fetchEnviroment() {
             const data = await api.get('/plants_environments?_sort=title&_order=asc');
@@ -119,7 +126,7 @@ function PlantSelect() {
                     horizontal
                     showsHorizontalScrollIndicator={false}
                     contentContainerStyle={styles.enviromentList}
-                    keyExtractor={(item) => item.key}
+                    keyExtractor={(item) => String(item.key)}
                 />
             </View>
 
@@ -129,10 +136,11 @@ function PlantSelect() {
                     renderItem={({ item }) => (
                         <PlantCardPrimary
                             data={item}
+                            onPress={() => handlePlantSelect(item)}
                         />
                     )}
                     showsVerticalScrollIndicator={false}
-                    keyExtractor={(item) => item.name}
+                    keyExtractor={(item) => String(item.id)}
                     numColumns={2}
                     onEndReachedThreshold={0.1}
                     onEndReached={({distanceFromEnd}) => handleFetchMore(distanceFromEnd)}
