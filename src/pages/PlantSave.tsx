@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, Image, Platform, Alert } from 'react-native';
+import { StyleSheet, View, Text, Image, Platform, Alert, ScrollView } from 'react-native';
 import { SvgFromUri } from 'react-native-svg';
 import { useNavigation, useRoute } from '@react-navigation/core';
 import DateTimePicker, { Event } from '@react-native-community/datetimepicker';
@@ -56,64 +56,69 @@ function PlantSave() {
     }
 
     return (
-        <View style={styles.container}>
-            <View style={styles.plantInfo}>
-                <SvgFromUri
-                    uri={plant.photo}
-                    height={150}
-                    width={150}
-                />
-
-                <Text style={styles.plantName}>
-                    {plant.name}
-                </Text>
-
-                <Text style={styles.plantAbout}>
-                    {plant.about}
-                </Text>
-            </View>
-
-            <View style={styles.controller}>
-                <View style={styles.tipContainer}>
-                    <Image
-                        source={waterdrop}
-                        style={styles.tipImage}
+        <ScrollView
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.container}
+        >
+            <View style={styles.container}>
+                <View style={styles.plantInfo}>
+                    <SvgFromUri
+                        uri={plant.photo}
+                        height={150}
+                        width={150}
                     />
 
-                    <Text style={styles.tipText}>
-                        {plant.water_tips}
+                    <Text style={styles.plantName}>
+                        {plant.name}
+                    </Text>
+
+                    <Text style={styles.plantAbout}>
+                        {plant.about}
                     </Text>
                 </View>
 
-                <Text style={styles.alertLabel}>
-                    Escolha o melhor horário para ser lembrado:
-                </Text>
+                <View style={styles.controller}>
+                    <View style={styles.tipContainer}>
+                        <Image
+                            source={waterdrop}
+                            style={styles.tipImage}
+                        />
 
-                {
-                    Platform.OS === 'android' &&
+                        <Text style={styles.tipText}>
+                            {plant.water_tips}
+                        </Text>
+                    </View>
+
+                    <Text style={styles.alertLabel}>
+                        Escolha o melhor horário para ser lembrado:
+                    </Text>
+
+                    {
+                        Platform.OS === 'android' &&
+                        <Button
+                            title={`Escolher o horário ${format(selectedDatePicker, 'HH:mm')}`}
+                            onPress={() => setShowDatePicker(true)}
+                            style={styles.timeButton}
+                        /> 
+                    }
+                    {showDatePicker && (
+                        <DateTimePicker
+                            value={selectedDatePicker}
+                            mode="time"
+                            display="spinner"
+                            onChange={ handleChangeTime }
+                            is24Hour
+                        />
+                    )}
+
                     <Button
-                        title={`Escolher o horário ${format(selectedDatePicker, 'HH:mm')}`}
-                        onPress={() => setShowDatePicker(true)}
-                        style={styles.timeButton}
-                    /> 
-                }
-                {showDatePicker && (
-                    <DateTimePicker
-                        value={selectedDatePicker}
-                        mode="time"
-                        display="spinner"
-                        onChange={ handleChangeTime }
-                        is24Hour
+                        title="Cadastrar planta"
+                        onPress={handleSave}
+                        style={styles.button}
                     />
-                )}
-
-                <Button
-                    title="Cadastrar planta"
-                    onPress={handleSave}
-                    style={styles.button}
-                />
+                </View>
             </View>
-        </View>
+        </ScrollView>
     )
 }
 
