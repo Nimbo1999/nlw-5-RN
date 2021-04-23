@@ -35,7 +35,13 @@ function UserIdentification() {
     async function handleSubmit() {
         if (name) {
             await AsyncStorage.setItem('@plantmanager:user', name);
-            return navigation.navigate('Confirmation');;
+            return navigation.navigate('Confirmation', {
+                title: 'Prontinho',
+                subtitle: 'Agora vamos começar a cuidar das suas plantinhas com muito cuidado.',
+                buttonTitle: 'Começar',
+                icon: 'smile',
+                nextScreen: 'PlantSelect',
+            });
         }
 
         return Alert.alert('Informe o seu nome', 'O nome é obrigatório.');

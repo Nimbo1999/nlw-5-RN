@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, Image, Platform, Alert } from 'react-native';
 import { SvgFromUri } from 'react-native-svg';
-import { useRoute } from '@react-navigation/core';
+import { useNavigation, useRoute } from '@react-navigation/core';
 import DateTimePicker, { Event } from '@react-native-community/datetimepicker';
-import {isBefore} from 'date-fns';
+import {format, isBefore} from 'date-fns';
+
+import { PlantProps, savePlant } from '../libs/storage';
 
 import Button from '../components/Button';
-import { PlantProps } from './PlantSelect';
 
 import waterdrop from '../assets/waterdrop.png';
 import colors from '../styles/colors';
@@ -17,6 +18,7 @@ interface Params {
 }
 
 function PlantSave() {
+    const navigation = useNavigation();
     const route = useRoute();
     const { plant } = route.params as Params; 
 
@@ -34,6 +36,23 @@ function PlantSave() {
         }
 
         if (dateTime) setSelectedDatePicker(dateTime);
+    }
+
+    async function handleSave() {
+        try {
+            await savePlant ({...plant, dateTimeNotification: selectedDatePicker });
+
+            navigation.navigate('Confirmation', {
+                title: 'Tudo certo',
+                subtitle: 'Fique tranquilo que sempre vamos lembrar você de cuidar da sua plantinha com muito cuidado.',
+                buttonTitle: 'Muito Obrigado :D',
+                icon: 'hug',
+                nextScreen: 'MyPlants',
+            });
+
+        } catch {
+            Alert.alert('Error!', 'Não foi possível salvar a planta.');
+        }
     }
 
     return (
@@ -70,20 +89,27 @@ function PlantSave() {
                     Escolha o melhor horário para ser lembrado:
                 </Text>
 
-                <Button title="Escolher o horário" onPress={() => setShowDatePicker(true)} style={styles.timeButton} />
+                {
+                    Platform.OS === 'android' &&
+                    <Button
+                        title={`Escolher o horário ${format(selectedDatePicker, 'HH:mm')}`}
+                        onPress={() => setShowDatePicker(true)}
+                        style={styles.timeButton}
+                    /> 
+                }
                 {showDatePicker && (
                     <DateTimePicker
                         value={selectedDatePicker}
                         mode="time"
                         display="spinner"
                         onChange={ handleChangeTime }
-
+                        is24Hour
                     />
                 )}
 
                 <Button
                     title="Cadastrar planta"
-                    onPress={() => {}}
+                    onPress={handleSave}
                     style={styles.button}
                 />
             </View>
